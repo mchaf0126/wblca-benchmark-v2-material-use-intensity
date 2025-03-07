@@ -1,7 +1,3 @@
-# RUN THIS TO UPDATE THE APP.PY FILE:
-## gcloud compute scp "C:\Users\ashtiani\Desktop\WBLCA_Benchmarking\Material Intensity - Publication\Google Compute Engine\app.py" wblca-v2-mui-eci-20250305-205241:/home/ashtiani/mui-eci-dash-app/
-
-
 import os
 import dash
 from dash import dcc, html, Input, Output, State
