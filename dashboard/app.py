@@ -57,10 +57,10 @@ for col in numeric_cols:
 merged_df = pd.merge(wblca_results_full, wblca_meta_data, on="project_index", how="left")
 
 # Compute derived columns safely
-merged_df['material_intensity'] = np.where(
+merged_df['mui (kg/m²)'] = np.where(
     merged_df['bldg_cfa'] != 0, merged_df['inv_mass'] / merged_df['bldg_cfa'], np.nan)
 
-merged_df['gwp_intensity'] = np.where(
+merged_df['eci (kgCO₂e/m²)'] = np.where(
     merged_df['bldg_cfa'] != 0, merged_df['gwp'] / merged_df['bldg_cfa'], np.nan)
 
 merged_df['gwp_factor'] = np.where(
@@ -71,11 +71,19 @@ merged_df['gwp_factor'] = np.where(
 categorical_options = [{'label': col, 'value': col} for col in merged_df.columns if merged_df[col].dtype == 'object']
 numerical_options = [{'label': col, 'value': col} for col in merged_df.columns if merged_df[col].dtype in ['float64', 'int']]
 
-# Restrict numerical options to only "material_intensity" and "gwp_intensity"
+# Restrict numerical options to only "mui (kg/m²)" and "eci (kgCO₂e/m²)"
 material_numerical_options = [
-    {"label": "Material Use Intensity", "value": "material_intensity"},
-    {"label": "Embodied Carbon Intensity", "value": "gwp_intensity"}
+    {"label": "Material Use Intensity", "value": "mui (kg/m²)"},
+    {"label": "Embodied Carbon Intensity", "value": "eci (kgCO₂e/m²)"}
 ]
+
+# Rename some feature names:
+wblca_meta_data.rename(columns={
+    'total_mass_a1_to_a3': 'total_mass_a1_to_a3 (kg)',
+    'total_gwp_a1_to_a3': 'total_gwp_a1_to_a3 (kgCO₂e)',
+    'mui_a1_to_a3': 'mui_a1_to_a3 (kg/m²)',
+    'eci_a1_to_a3': 'eci_a1_to_a3 (kgCO₂e/m²)',
+}, inplace=True)
 
 # ✅ Encode Image
 def encode_image(image_path):
@@ -381,7 +389,7 @@ def render_tab_content(tab, stored_selections, stored_graph):
                         ], style={'display': 'flex'}),
                     ], style={'margin-bottom': '10px'}),
 
-                ], style={'width': '15%', 'padding': '10px', 'display': 'inline-block', 'verticalAlign': 'top'}),  # Left section (1/4 width)
+                ], style={'width': '25%', 'padding': '10px', 'display': 'inline-block', 'verticalAlign': 'top'}),  # Left section (1/4 width)
 
                 # Right side (Graph) - 3/4 width
                 html.Div([
@@ -389,7 +397,7 @@ def render_tab_content(tab, stored_selections, stored_graph):
                         id='visualization',
                         figure=go.Figure(**stored_graph) if stored_graph and "data" in stored_graph else go.Figure()
                     )
-                ], style={'width': '80%', 'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', 'verticalAlign': 'top', 'padding-left': '10px'}),  # Right section (3/4 width)
+                ], style={'width': '70%', 'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', 'verticalAlign': 'top', 'padding-left': '10px'}),  # Right section (3/4 width)
 
             ], style={'display': 'flex', 'justify-content': 'space-between'}),  # Flex container for alignment
         ])
@@ -554,12 +562,12 @@ def render_tab_content(tab, stored_selections, stored_graph):
                         ], style={'display': 'flex'}),
                     ], style={'margin-bottom': '10px'}),
 
-                ], style={'width': '15%', 'padding': '10px', 'display': 'inline-block', 'verticalAlign': 'top'}),  # Left section (1/4 width)
+                ], style={'width': '25%', 'padding': '10px', 'display': 'inline-block', 'verticalAlign': 'top'}),  # Left section (1/4 width)
 
                 # Right side (Graph) - 3/4 width
                 html.Div([
                     dcc.Graph(id="bar-chart")
-                ], style={'width': '80%', 'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', 'verticalAlign': 'top', 'padding-left': '10px' }),  # Right section (3/4 width)
+                ], style={'width': '70%', 'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', 'verticalAlign': 'top', 'padding-left': '10px' }),  # Right section (3/4 width)
 
             ], style={'display': 'flex', 'justify-content': 'space-between'}),  # Flex container to align sections horizontally
         ])
