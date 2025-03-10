@@ -199,10 +199,13 @@ def render_tab_content(tab, stored_selections, stored_graph):
                 html.Li("Exportable Data: Download graphs and data summaries for offline use and further analysis."),
             ]),
             html.Br(),
-            html.P("For questions, contact ashtiani@uw.edu. Enjoy exploring!",
-                   style={'textAlign': 'center', 'marginTop': '20px'}),
-            html.P("© Life Cycle Lab 2025", 
-               style={'textAlign': 'center', 'marginTop': '20px', 'fontSize': '16px', 'color': 'gray'}),
+            html.P([
+                "CC BY 4.0 International Life Cycle Lab 2025 – ",
+                html.A("Creative Commons Attribution 4.0 International License", 
+                    href="https://creativecommons.org/licenses/by/4.0/", 
+                    target="_blank", 
+                    style={'color': 'gray', 'textDecoration': 'none'})
+            ], style={'textAlign': 'center', 'marginTop': '20px', 'fontSize': '16px', 'color': 'gray'})
 
         ], style={'padding': '20px'})
 
