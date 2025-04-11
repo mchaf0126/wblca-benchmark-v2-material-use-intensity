@@ -1,6 +1,6 @@
 import os
 import dash
-from dash import dcc, html, Input, Output, State
+from dash import dcc, html, Input, Output, State, page_container
 import dash_bootstrap_components as dbc
 import dash_table
 import plotly.graph_objects as go
@@ -13,6 +13,7 @@ import matplotlib.cm as cm
 app = dash.Dash(
     __name__,
     suppress_callback_exceptions=True,
+    use_pages=True,
     external_stylesheets=["https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap"],
     requests_pathname_prefix="/"  # Set this correctly when using an iframe
 
@@ -117,98 +118,11 @@ app.layout = html.Div([
     dcc.Store(id="building-level-selections"),
     dcc.Store(id="material-graph-data"),
     dcc.Store(id="building-graph-data"),
+    page_container
+])
 
-    # ✅ Create Tab Layout
-    dcc.Tabs(
-        id="tabs",
-        value="instructions",
-        children=[
-            dcc.Tab(
-                label="Introduction",
-                value="instructions",
-                style={'fontWeight': 'bold', 'fontSize': '14px', 'height': '24px',
-                    'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'},
-                selected_style={'fontSize': '14px', 'height': '24px',
-                                'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center',
-                                'backgroundColor': '#f4edff', 'borderTop': '1px solid black'}
-            ),
-            dcc.Tab(
-                label="Data Glossary",
-                value="glossary",
-                style={'fontWeight': 'bold', 'fontSize': '14px', 'height': '24px',
-                    'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'},
-                selected_style={'fontSize': '14px', 'height': '24px',
-                                'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center',
-                                'backgroundColor': '#f4edff', 'borderTop': '1px solid black'}
-            ),
-            dcc.Tab(
-                label="Material Level Analysis",
-                value="material_analysis",
-                style={'fontWeight': 'bold', 'fontSize': '14px', 'height': '24px',
-                    'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'},
-                selected_style={'fontSize': '14px', 'height': '24px',
-                                'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center',
-                                'backgroundColor': '#f4edff', 'borderTop': '1px solid black'}
-            ),
-            dcc.Tab(
-                label="Building Level Analysis",
-                value="building_analysis",
-                style={'fontWeight': 'bold', 'fontSize': '14px', 'height': '24px',
-                    'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'},
-                selected_style={'fontSize': '14px', 'height': '24px',
-                                'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center',
-                                'backgroundColor': '#f4edff', 'borderTop': '1px solid black'}
-            ),
-        ]),
 
-    # ✅ Content of Tabs
-    html.Div(id="tab-content")
-], style={'font-family': 'Open Sans, sans-serif'})
-
-# Callback to switch tab content
-@app.callback(
-    Output("tab-content", "children"),
-    Input("tabs", "value"),
-    State("material-level-selections", "data"),
-    State("material-graph-data", "data"),
-)
 def render_tab_content(tab, stored_selections, stored_graph):
-    if tab == "instructions":
-        return html.Div([
-            html.P("This advanced dashboard is developed as part of the Carbon Leadership Forum's (CLF) WBLCA Benchmarking Study V2, designed primarily for the visualization of Material Use Intensity and Embodied Carbon Intensity. It serves as an interactive platform to explore the environmental impacts of building materials and construction practices. Detailed information on the data collection methodologies and metadata can be found in the associated journal publication, which is currently under review (placeholder for DOI).",
-                   style={'textAlign': 'justify'}),
-            html.H4("Purpose of the Tool:"),
-            html.Ul([
-                html.Li("Material Use Intensity and Embodied Carbon Visualization: Focuses on detailed presentation of material and carbon footprint data."),
-                html.Li("Research and Data Background: Derived from the CLF’s comprehensive WBLCA Benchmarking Study V2, facilitating insights into sustainable building practices."),
-            ]),
-            html.H4("Scope of Analysis:"),
-            html.Ul([
-                html.Li("Life Cycle Assessment (LCA) scope is limited to cradle to gate impacts (A1 to A3)."),
-                html.Li("Building scopes are limited to 'new construction' projects in North America."),
-            ]),
-            html.H4("Navigation Overview:"),
-            html.Ul([
-                html.Li("'Material Level Analysis': Allows detailed examination of material-specific data through filters, aggregation methods, and custom visualizations."),
-                html.Li("'Building Level Analysis': Focuses on building-level data, offering insights through comparisons and analyses of different building types and construction metrics."),
-            ]),
-            html.H4("Using the Dashboard:"),
-            html.Ul([
-                html.Li("Interactive Visualizations: Graphs and charts update in real time based on user inputs."),
-                html.Li("Customizable Outputs: Tailor visual outputs through detailed control panels to focus your analysis."),
-                html.Li("Exportable Data: Download graphs and data summaries for offline use and further analysis."),
-            ]),
-            html.Br(),
-            html.P([
-                "CC BY 4.0 International Life Cycle Lab 2025 – ",
-                html.A("Creative Commons Attribution 4.0 International License", 
-                    href="https://creativecommons.org/licenses/by/4.0/", 
-                    target="_blank", 
-                    style={'color': 'gray', 'textDecoration': 'none'})
-            ], style={'textAlign': 'center', 'marginTop': '20px', 'fontSize': '16px', 'color': 'gray'})
-
-        ], style={'padding': '20px'})
-
     elif tab == "glossary":
         # Define specific widths for each column based on typical content length
         column_styles = [
@@ -1185,4 +1099,4 @@ def update_bar_chart(
 
 # ✅ Ensure This Works with Gunicorn
 if __name__ == "__main__":
-    app.run_server(host="0.0.0.0", port=8050)
+    app.run_server(debug=True)
